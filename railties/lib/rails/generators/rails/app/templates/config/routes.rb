@@ -52,4 +52,7 @@
 
 
   # See how all your routes lay out with "rake routes".
+  get '/404'  => 'errors#not_found'
+  get '/422'  => 'errors#rejected_change'
+  get '/500'  => 'errors#error'
 end
