@@ -11,6 +11,26 @@ require "action_controller/railtie"
 module ActiveRecord
   # = Active Record Railtie
   class Railtie < Rails::Railtie # :nodoc:
+
+    MERGE_URL_INTO_CONFIG = ->(url, config) {
+      config     ||= {}
+      env_config = config[Rails.env]
+      if env_config && env_config.is_a?(Hash)
+        env_config.merge!(url: url) { |hash, v1, v2| v1 || v2 }
+      end
+      config
+    }
+
+    DATABASE_CONFIG = ->(app) {
+      config = app.config.database_configuration || { Rails.env => {} }
+
+      config = if url = ENV['DATABASE_URL']
+        MERGE_URL_INTO_CONFIG.call(url, config)
+      else
+        config
+      end
+    }
+
     config.active_record = ActiveSupport::OrderedOptions.new
 
     config.app_generators.orm :active_record, :migration => true,
@@ -47,19 +67,16 @@ module ActiveRecord
           ActiveRecord::Tasks::DatabaseTasks.fixtures_path = File.join Rails.root, 'test', 'fixtures'
           ActiveRecord::Tasks::DatabaseTasks.root = Rails.root
 
-          configuration = if ENV["DATABASE_URL"]
-            { Rails.env => ENV["DATABASE_URL"] }
-          else
-            Rails.application.config.database_configuration || {}
-          end
 
           resolver = ActiveRecord::ConnectionAdapters::ConnectionSpecification::Resolver.new(configuration)
+          config   = DATABASE_CONFIG.call(Rails.application)
+          resolver = ActiveRecord::ConnectionAdapters::ConnectionSpecification::Resolver.new(config)
 
-          configuration.each do |key, value|
-            configuration[key] = resolver.resolve(value) if value
+          config.each do |env, value|
+            config[env] = resolver.resolve(value) if value
           end
 
-          ActiveRecord::Tasks::DatabaseTasks.database_configuration = configuration
+          ActiveRecord::Tasks::DatabaseTasks.database_configuration = config
 
           if defined?(ENGINE_PATH) && engine = Rails::Engine.find(ENGINE_PATH)
             if engine.paths['db/migrate'].existent
@@ -144,7 +161,7 @@ module ActiveRecord
           end
         end
 
-        self.configurations = app.config.database_configuration || {}
+        self.configurations = DATABASE_CONFIG.call(app)
         establish_connection
       end
     end
