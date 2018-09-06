@@ -45,6 +45,7 @@ module ActionView
         value = nil
         buffer = with_output_buffer { value = yield(*args) }
         if (string = buffer.presence || value) && string.is_a?(String)
+          return string if string.html_safe?
           ERB::Util.html_escape string
         end
       end

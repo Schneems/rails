@@ -325,7 +325,7 @@ module ActionView
 
           cache_collection_render(payload) do
             @template ? collection_with_template : collection_without_template
-          end.join(spacer).html_safe
+          end.join(spacer).html_safe!
         end
       end
 

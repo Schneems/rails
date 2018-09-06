@@ -175,9 +175,9 @@ module ActiveSupport #:nodoc:
       # first_caller = caller.first
       # @@caller_count[first_caller] += 1
 
-      # puts "=============================================================="
+      puts "=============================================================="
       # puts @@caller_count.sort_by { |k, v| v }
-      # puts caller
+      puts caller
       super
     end
 
