@@ -13,13 +13,15 @@ module ActionView
     end
 
     class << self
+      EMPTY_ARRAY = [].freeze
+      private_constant :EMPTY_ARRAY
+
       # Supported options:
       #
       # * <tt>name</tt>   - Template name
       # * <tt>finder</tt>  - An instance of <tt>ActionView::LookupContext</tt>
       # * <tt>dependencies</tt>  - An array of dependent views
-      def digest(name:, finder:, dependencies: [])
-        dependencies ||= []
+      def digest(name:, finder:, dependencies: EMPTY_ARRAY)
         if dependencies.nil? || dependencies.empty?
           cache_key = "#{name}.#{finder.rendered_format}"
         else
