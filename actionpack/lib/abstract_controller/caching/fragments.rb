@@ -116,7 +116,7 @@ module AbstractController
         key = combined_fragment_cache_key(key)
         instrument_fragment_cache :read_fragment, key do
           result = cache_store.read(key, options)
-          result.respond_to?(:html_safe) ? result.html_safe : result
+          result.respond_to?(:html_safe!) ? result.html_safe! : result
         end
       end
 

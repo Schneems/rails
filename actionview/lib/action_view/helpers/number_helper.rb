@@ -436,7 +436,7 @@ module ActionView
           formatted_number = yield
 
           if valid_float || number.html_safe?
-            formatted_number.html_safe
+            formatted_number.html_safe!
           else
             formatted_number
           end

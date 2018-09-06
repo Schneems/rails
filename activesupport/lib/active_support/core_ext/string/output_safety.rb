@@ -175,9 +175,9 @@ module ActiveSupport #:nodoc:
       # first_caller = caller.first
       # @@caller_count[first_caller] += 1
 
-      puts "=============================================================="
+      # puts "=============================================================="
       # puts @@caller_count.sort_by { |k, v| v }
-      puts caller
+      # puts caller
       super
     end
 
@@ -256,15 +256,27 @@ end
 class FastStringSafe
 
   def initialize(string)
+    @html_safe = true
     @string = string
   end
 
   def html_safe?
-    true
+    @html_safe
   end
 
   def to_s
     @string
+  end
+  alias :to_str :to_s
+
+  ActiveSupport::SafeBuffer::UNSAFE_STRING_METHODS.each do |unsafe_method|
+    if unsafe_method.respond_to?(unsafe_method)
+      class_eval <<-EOT, __FILE__, __LINE__ + 1
+        def #{unsafe_method}(*args, &block)       # def capitalize(*args, &block)
+          @string.#{unsafe_method}(*args, &block)  #   to_str.capitalize(*args, &block)
+        end                                       # end
+      EOT
+    end
   end
 end
 
