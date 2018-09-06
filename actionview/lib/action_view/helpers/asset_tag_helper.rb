@@ -99,7 +99,7 @@ module ActionView
             tag_options["nonce"] = content_security_policy_nonce
           end
           content_tag("script".freeze, "", tag_options)
-        }.join("\n").html_safe
+        }.join("\n").html_safe!
 
         request.send_early_hints("Link" => early_hints_links.join("\n")) if respond_to?(:request) && request
 
@@ -148,7 +148,7 @@ module ActionView
             "href" => href
           }.merge!(options)
           tag(:link, tag_options)
-        }.join("\n").html_safe
+        }.join("\n").html_safe!
 
         request.send_early_hints("Link" => early_hints_links.join("\n")) if respond_to?(:request) && request
 

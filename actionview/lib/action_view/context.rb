@@ -31,7 +31,7 @@ module ActionView
     # overwritten by helpers to add more behavior.
     def _layout_for(name = nil)
       name ||= :layout
-      view_flow.get(name).html_safe
+      view_flow.get(name).html_safe!
     end
   end
 end

@@ -237,7 +237,7 @@ module ActionView
         if name.nil?
           tag_builder
         else
-          "<#{name}#{tag_builder.tag_options(options, escape) if options}#{open ? ">" : " />"}".html_safe
+          "<#{name}#{tag_builder.tag_options(options, escape) if options}#{open ? ">" : " />"}".html_safe!
         end
       end
 
