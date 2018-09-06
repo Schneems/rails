@@ -169,8 +169,10 @@ module ActiveSupport #:nodoc:
       original_concat(value)
     end
 
-    @@caller_count = Hash.new {|h,k| h[k] = 0 }
-    def initialize(str = "")
+    EMPTY_STRING = "".freeze
+    private_constant :EMPTY_STRING
+    # @@caller_count = Hash.new {|h,k| h[k] = 0 }
+    def initialize(str = EMPTY_STRING)
       @html_safe = true
       # first_caller = caller.first
       # @@caller_count[first_caller] += 1
