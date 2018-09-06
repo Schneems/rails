@@ -297,6 +297,6 @@ class String
   end
 
   def html_safe!
-    FastStringSafe.new(self.freeze)
+    FastStringSafe.new(self)
   end
 end
