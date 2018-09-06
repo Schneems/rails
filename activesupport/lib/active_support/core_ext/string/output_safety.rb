@@ -169,8 +169,15 @@ module ActiveSupport #:nodoc:
       original_concat(value)
     end
 
+    @@caller_count = Hash.new {|h,k| h[k] = 0 }
     def initialize(str = "")
       @html_safe = true
+      # first_caller = caller.first
+      # @@caller_count[first_caller] += 1
+
+      # puts "=============================================================="
+      # puts @@caller_count.sort_by { |k, v| v }
+      # puts caller
       super
     end
 
@@ -246,6 +253,21 @@ module ActiveSupport #:nodoc:
   end
 end
 
+class FastStringSafe
+
+  def initialize(string)
+    @string = string
+  end
+
+  def html_safe?
+    true
+  end
+
+  def to_s
+    @string
+  end
+end
+
 class String
   # Marks a string as trusted safe. It will be inserted into HTML with no
   # additional escaping performed. It is your responsibility to ensure that the
@@ -254,5 +276,9 @@ class String
   # this method. It should never be called on user input.
   def html_safe
     ActiveSupport::SafeBuffer.new(self)
+  end
+
+  def html_safe!
+    FastStringSafe.new(self.freeze)
   end
 end
