@@ -269,6 +269,10 @@ class FastStringSafe
   end
   alias :to_str :to_s
 
+  def html_safe!
+    self
+  end
+
   ActiveSupport::SafeBuffer::UNSAFE_STRING_METHODS.each do |unsafe_method|
     if unsafe_method.respond_to?(unsafe_method)
       class_eval <<-EOT, __FILE__, __LINE__ + 1
